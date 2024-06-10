@@ -1,0 +1,37 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: proyecto-biblioteca
+  httpclient:
+    connect-timeout: 1000
+    read-timeout: 5s
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: ${ALLOWED_HOSTS}
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        # Microservices
+
+        - id: backend
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/,/api/
+        - id: frontend
+          uri: http://localhost:3000
+          predicates:
+            - Path=/**
